@@ -1,0 +1,6 @@
+{
+  "watch": ["src/", ".env", "tsconfig.json"],
+  "execMap": {
+    "ts": "ts-node -T"
+  }
+}

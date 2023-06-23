@@ -1,0 +1,9 @@
+export interface ICard {
+  icon: string
+  color: number
+  wildColor?: number
+}
+
+export interface ICardsSheet {
+  [key: string]: [number, number]
+}
