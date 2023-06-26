@@ -56,7 +56,10 @@ roomCtrl.get('/join/:id', (req, res) => {
  * Cria uma sala
  */
 roomCtrl.post('/', (req, res) => {
-  const room = rooms.newRoom({ owner: req.sessionID, isPublic: true /* temp */ })
-  room.joinGame({ id: req.sessionID, name: req.session.name })
+  const room = rooms.newRoom({ owner: req.query.sessionID as string|| req.sessionID, isPublic: true /* temp */ })
+  room.joinGame({
+    id: (req.query.sessionID as string) || req.sessionID,
+    name: (req.query.name as string) || req.session.name
+  })
   res.json(room)
 })
