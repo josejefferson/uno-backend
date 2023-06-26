@@ -16,7 +16,7 @@ export class Rooms {
 
   get publicRooms() {
     return this.rooms.filter((room) => {
-      return room.isPublic && !room.started && room.players.length < 10
+      return room.isPublic// && !room.started && room.players.length < 10
     })
   }
 
