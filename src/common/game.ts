@@ -211,6 +211,7 @@ export default class Game extends EventEmitter2 {
   reporBaralho() {
     const cartasRestantes = this.#descarte.splice(1)
     cartasRestantes.sort(() => this.#random() - this.#random())
+    cartasRestantes.forEach((carta) => delete carta.wildColor)
     this.#baralho.push(...cartasRestantes)
     this.setBaralhoCount(this.#baralho.length)
   }
