@@ -1,4 +1,5 @@
 export interface ICard {
+  id: number
   icon: string
   color: number
   wildColor?: number
