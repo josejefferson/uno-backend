@@ -84,7 +84,7 @@ export default class Game extends EventEmitter2 {
   distribuir() {
     for (const i in this.players) {
       const cards = []
-      for (let i = 0; i < 3; i++) {
+      for (let i = 0; i < 7; i++) {
         cards.push(this.tirarCartaDoBaralho())
       }
       this.setPlayerCards(+i, cards)
