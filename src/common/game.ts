@@ -205,13 +205,13 @@ export default class Game extends EventEmitter2 {
   }
 
   gritarUNO(quemGritou: Player) {
-    this.emit('game:gritarUNO', quemGritou)
     const jogadorIndex = this.players.findIndex((p) => p.id === quemGritou.id)
     const jogador = this.players[jogadorIndex]
 
     // Se quem gritou UNO é o jogador atual (antes de jogar), então ele se salva
     if (!this.unoPlayer && quemGritou.id === this.jogadorAtual.id) {
       this.unoSalvo = true
+      this.emit('warning', `${quemGritou.name} gritou UNO!`)
       return
     }
 
@@ -223,6 +223,7 @@ export default class Game extends EventEmitter2 {
     // Se quem gritou UNO é o jogador que estava de UNO (depois de jogar), então ele se salva
     if (quemGritou.id === this.unoPlayer?.id) {
       this.unoPlayer = null
+      this.emit('warning', `${quemGritou.name} gritou UNO!`)
       return
     }
 
