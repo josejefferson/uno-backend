@@ -35,7 +35,7 @@ roomNamespace.on('connection', (socket) => {
 
   // Aguarda os comandos do Game
   socket.onAny((eventName, ...args) => {
-    if (!['game:jogar', 'game:comprar', 'game:passar'].includes(eventName)) return
+    if (!['game:jogar', 'game:comprar', 'game:passar', 'game:gritarUNO'].includes(eventName)) return
     try {
       ;(room.currentGame as any)?.[eventName.split('game:')[1]]?.(...args)
     } catch (err: any) {

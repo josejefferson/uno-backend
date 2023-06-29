@@ -28,6 +28,8 @@ export default class Game extends EventEmitter2 {
   jogador: number
   direcao: 1 | -1
   comprou: boolean // determina se o jogador pode passar, já que comprou
+  unoPlayer: Player | null
+  unoSalvo: boolean
 
   get descarte() {
     return this.#descarte
@@ -59,6 +61,8 @@ export default class Game extends EventEmitter2 {
     this.direcao = props.direcao ?? 1
     this.jogador = props.jogador ?? Math.floor(this.#random() * this.players.length)
     this.comprou = false
+    this.unoPlayer = null
+    this.unoSalvo = false
   }
 
   comeca() {
@@ -80,7 +84,7 @@ export default class Game extends EventEmitter2 {
   distribuir() {
     for (const i in this.players) {
       const cards = []
-      for (let i = 0; i < 7; i++) {
+      for (let i = 0; i < 3; i++) {
         cards.push(this.tirarCartaDoBaralho())
       }
       this.setPlayerCards(+i, cards)
@@ -159,6 +163,12 @@ export default class Game extends EventEmitter2 {
       return
     }
 
+    this.unoPlayer = null
+    if (!this.unoSalvo && this.#playerCards[this.jogador].length === 1) {
+      this.setUNOPlayer(this.jogador)
+    }
+    this.unoSalvo = false
+
     switch (carta.icon) {
       case 'REVERSE':
         this.inverter()
@@ -190,6 +200,48 @@ export default class Game extends EventEmitter2 {
     this.emit('game:setJogador', index)
   }
 
+  setUNOPlayer(player: number) {
+    this.unoPlayer = this.players[player]
+  }
+
+  gritarUNO(quemGritou: Player) {
+    this.emit('game:gritarUNO', quemGritou)
+    const jogadorIndex = this.players.findIndex((p) => p.id === quemGritou.id)
+    const jogador = this.players[jogadorIndex]
+
+    // Se quem gritou UNO é o jogador atual (antes de jogar), então ele se salva
+    if (!this.unoPlayer && quemGritou.id === this.jogadorAtual.id) {
+      this.unoSalvo = true
+      return
+    }
+
+    // Se não houver nenhum jogador com UNO pendente
+    if (!this.unoPlayer) {
+      return
+    }
+
+    // Se quem gritou UNO é o jogador que estava de UNO (depois de jogar), então ele se salva
+    if (quemGritou.id === this.unoPlayer?.id) {
+      this.unoPlayer = null
+      return
+    }
+
+    // Se quem gritou UNO é outro jogador, e há um jogador com UNO pendente, ele é pego
+    const forgotUNOPlayer = this.players.findIndex((p) => p.id === this.unoPlayer?.id)
+    for (let i = 0; i < 2; i++) this.comprar(true, forgotUNOPlayer)
+    this.unoPlayer.socket?.emit('message', 'Esqueceu de dizer UNO')
+    this.emit(
+      'warning',
+      `${jogador?.name} percebeu que ${this.unoPlayer?.name} esqueceu de dizer UNO!`
+    )
+    this.unoPlayer = null
+  }
+
+  resetUNOPlayer() {
+    this.unoPlayer = null
+    this.unoSalvo = false
+  }
+
   podeJogar(carta: ICard) {
     if (this.topo?.color === COLORS.WILD && this.topo?.wildColor === undefined) return true
     if (this.topo?.color === COLORS.WILD && this.topo?.wildColor === carta.color) return true
@@ -199,13 +251,15 @@ export default class Game extends EventEmitter2 {
     return false
   }
 
-  comprar(automatico = false) {
+  comprar(automatico = false, jogador?: number) {
+    if (!automatico) this.resetUNOPlayer()
     if (!automatico && this.comprou) throw new Error('Você já comprou, agora passe a vez')
-    this.comprou = true
+    if (!automatico) this.comprou = true
     const carta = this.tirarCartaDoBaralho()
     if (!carta) return
-    this.addPlayerCards(this.jogador, [carta])
-    this.setPlayerCardsLength(this.jogador, this.#playerCards[this.jogador].length)
+    const player = jogador ?? this.jogador
+    this.addPlayerCards(player, [carta])
+    this.setPlayerCardsLength(player, this.#playerCards[player].length)
   }
 
   reporBaralho() {
