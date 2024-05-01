@@ -9,7 +9,7 @@
     "dev": "cross-env NODE_ENV=development nodemon src/index.ts",
     "build": "rimraf dist *.tsbuildinfo && tsc",
     "format": "prettier -w .",
-    "check-types": "tsc --noEmit",
+    "test": "tsc --noEmit",
     "lint": "eslint . --ext .ts"
   },
   "dependencies": {
