@@ -23,7 +23,7 @@ roomNamespace.on('connection', (socket) => {
 
   socket.emit('room:data', room)
   socket.emit('player:data', player)
-  if (room.currentGame) socket.emit('player:setCards', room.currentGame?.getMyCards(player!))
+  if (room.currentGame) socket.emit('player:setCards', room.currentGame?.getMyCards(player))
 
   room.on('player:online', (player: any) => {
     io.of(socket.nsp.name).emit('player:online', player)
@@ -52,7 +52,7 @@ roomNamespace.on('connection', (socket) => {
 
   // Retorna suas cartas
   socket.on('game:getMyCards', (callback) => {
-    const cards = room.currentGame?.getMyCards(player!)
+    const cards = room.currentGame?.getMyCards(player)
     if (!cards) callback(new Error('Ocorreu um erro'))
     callback(null, cards)
   })

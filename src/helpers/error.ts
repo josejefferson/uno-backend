@@ -11,9 +11,11 @@ export default function error(error: any, req: Request, res: Response, next: Nex
 
   if (!isBoom(error)) {
     console.error(error)
-    error.statusCode
-      ? (error = boomify(error, { statusCode: error.statusCode }))
-      : (error = internal(error.message))
+    if (error.statusCode) {
+      error = boomify(error, { statusCode: error.statusCode })
+    } else {
+      error = internal(error.message)
+    }
   }
 
   res.status(error.output.statusCode)

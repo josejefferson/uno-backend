@@ -20,4 +20,4 @@ export type RoomNamespace = Namespace<
 >
 
 export type Socket = _Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
-export type Next = (err?: ExtendedError | undefined) => void
+export type Next = (err?: ExtendedError) => void

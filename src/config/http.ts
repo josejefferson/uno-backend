@@ -22,7 +22,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(expressSession)
 app.use((req, res, next) => {
-  req.session.name = req.session.name ?? randomName()
+  req.session.name ??= randomName()
   next()
 })
 app.use('/api', routes)

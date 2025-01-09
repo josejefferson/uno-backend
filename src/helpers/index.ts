@@ -6,7 +6,7 @@ export type Reviver = Parameters<JSON['parse']>[1]
 /** Converte uma string em JSON caso seja válida */
 export function jsonParse<T = any, U = any>(
   text: any,
-  defaultValue: U | any = {},
+  defaultValue: any = {},
   noDefaultValue = false,
   reviver?: Reviver
 ): T | U {
@@ -32,14 +32,14 @@ export function inheritEvents(a: EventEmitter2, b: EventEmitter2) {
   })
 }
 
-export function deserialize<T = any>(object: any | null, classe: { new (obj: any): any }): T {
+export function deserialize<T = any>(object: any, Classe: { new (obj: any): any }): T {
   if (!object) return object
   if (Array.isArray(object)) {
-    return object.map((object) => deserialize(object, classe)) as any
+    return object.map((object) => deserialize(object, Classe)) as any
   }
 
-  if (object instanceof classe) return object
-  return new classe(object)
+  if (object instanceof Classe) return object
+  return new Classe(object)
 }
 
 export const ERROR_PAGE = `
